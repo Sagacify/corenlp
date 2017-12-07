@@ -1,0 +1,22 @@
+machine:
+  pre:
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker build --build-arg LANGUAGE_MODEL=stanford-english-corenlp-2017-06-09-models --build-arg VERSION=stanford-corenlp-full-2017-06-09 -t sagacify/corenlp-en .
+    - docker build --build-arg LANGUAGE_MODEL=stanford-french-corenlp-2017-06-09-models --build-arg VERSION=stanford-corenlp-full-2017-06-09 -t sagacify/corenlp-fr .
+
+test:
+  override:
+    - echo "simple image build"
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - echo "{\"https://index.docker.io/v1/\":{\"auth\":\"<AUTH>\",\"email\":\"<EMAIL>\"}}" | sed "s/<EMAIL>/$HUB_EMAIL/;s/<AUTH>/$HUB_AUTH/" > ~/.dockercfg
+      - docker push sagacify/corenlp-en
+      - docker push sagacify/corenlp-fr
