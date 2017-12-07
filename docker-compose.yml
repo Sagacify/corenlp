@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        LANGUAGE_MODEL: stanford-french-corenlp-2017-06-09-models
+        VERSION: stanford-corenlp-full-2017-06-09
+    command: java -cp "*" -mx1g edu.stanford.nlp.pipeline.StanfordCoreNLPServer -serverProperties StanfordCoreNLP-french.properties -port 17158
+    ports:
+     - "19158:17158"
